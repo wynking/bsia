@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.pansky.otp5.association.dao.IProductionDao" >
+
+  <resultMap id="BaseResultMap" type="cn.com.pansky.otp5.association.dao.po.Production" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="enterprise_basic_id" property="eId" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="income" property="income" jdbcType="VARCHAR" />
+    <result column="enable" property="enable" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, enterprise_basic_id, name, income, enable
+  </sql>
+  
+  <insert id="insert" parameterType="cn.com.pansky.otp5.association.dao.po.Production" >
+    insert into sa_production (<include refid="Base_Column_List" />)
+    values (
+    		#{id}, #{eId}, #{name}
+    		, #{income},  #{enable}
+    )
+  </insert>
+  
+   <select id="findByPage" resultMap="BaseResultMap"  parameterType="map">
+  		select 
+  		 <include refid="Base_Column_List" />
+  		 from sa_production a 
+  		 where a.enterprise_basic_id = #{eId,jdbcType=VARCHAR}
+  		 and a.enable!='2'
+  		<!--  where user login_name like #{loginName} -->
+  		<!--  limit #{pageOffset}, #{pageSize} -->
+  </select>
+  
+   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from sa_production a
+    where a.id = #{id}
+  </select>
+  
+   <update id="updateByPrimaryKey" parameterType="cn.com.pansky.otp5.association.dao.po.Production" >  
+        update sa_production a  
+        <set >  
+          <if test="name != null" >  
+            name = #{name},  
+          </if>  
+          <if test="income != null" >  
+            income = #{income},  
+          </if>  
+          <if test="enable != null" >  
+            enable = #{enable}
+          </if>  
+        </set>  
+        where id = #{id,jdbcType=VARCHAR}  
+      </update>  
+  
+
+ 
+</mapper>

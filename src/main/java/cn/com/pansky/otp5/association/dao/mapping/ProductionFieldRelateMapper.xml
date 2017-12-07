@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.pansky.otp5.association.dao.IProductionFieldRelateDao" >
+
+  <resultMap id="BaseResultMap" type="cn.com.pansky.otp5.association.dao.po.ProductionFieldRelate" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="production_id" property="productionId" jdbcType="VARCHAR" />
+    <result column="fwly_code" property="fwlyCode" jdbcType="VARCHAR" />
+    <result column="creation_user" property="creationUser" jdbcType="VARCHAR" />
+    <result column="creation_time" property="creationTime" jdbcType="TIMESTAMP" />
+    <result column="last_modify_user" property="lastModifyUser" jdbcType="VARCHAR" />
+    <result column="last_modify_time" property="lastModifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, production_id, fwly_code,
+    creation_user,creation_time,last_modify_user,last_modify_time
+  </sql>
+  
+  <insert id="insert" parameterType="cn.com.pansky.otp5.association.dao.po.ProductionFieldRelate" >
+    insert into sa_production_field_relate (<include refid="Base_Column_List" />)
+    values (
+    		#{id}, #{productionId}, #{fwlyCode}, 
+    		#{creationUser},#{creationTime},#{lastModifyUser},#{lastModifyTime}
+    )
+  </insert>
+  
+  
+   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from sa_production_field_relate a
+    where a.id = #{id}
+  </select>
+  
+  <select id="selectByProducttionID" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from sa_production_field_relate
+    where production_id = #{productionId}
+  </select>
+  
+  <delete id="deleteByProducttionID" parameterType="java.lang.String">
+	  delete from sa_production_field_relate where production_id = #{productionId}
+	</delete>
+
+ <select id="selectAll" resultMap="BaseResultMap" >
+	    select *
+	    from sa_production_field_relate b
+	  </select>
+
+
+ 
+</mapper>

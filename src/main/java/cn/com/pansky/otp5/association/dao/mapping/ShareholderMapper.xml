@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.pansky.otp5.association.dao.IShareholderDao" >
+
+  <resultMap id="BaseResultMap" type="cn.com.pansky.otp5.association.dao.po.Shareholder" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="enterprise_basic_id" property="eId" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="sharehold_quantity" property="quantity" jdbcType="NUMERIC" />
+    <result column="sharehold_ratio" property="ratio" jdbcType="NUMERIC" />
+    <result column="enable" property="enable" jdbcType="VARCHAR" />
+     <result column="creation_user" property="creationUser" jdbcType="VARCHAR" />
+    <result column="creation_time" property="creationTime" jdbcType="TIMESTAMP" />
+    <result column="last_modify_user" property="lastModifyUser" jdbcType="VARCHAR" />
+    <result column="last_modify_time" property="lastModifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, enterprise_basic_id, name, sharehold_quantity, sharehold_ratio,enable,
+    creation_user,creation_time,last_modify_user,last_modify_time
+  </sql>
+  
+  <insert id="insert" parameterType="cn.com.pansky.otp5.association.dao.po.Shareholder" >
+    insert into sa_shareholder (<include refid="Base_Column_List" />)
+    values (
+    		#{id}, #{eId}, #{name}, 
+    		#{quantity}, #{ratio}, #{enable}, 
+    		#{creationUser},#{creationTime},#{lastModifyUser},#{lastModifyTime}
+    )
+  </insert>
+  
+   <select id="findByPage" resultMap="BaseResultMap"  parameterType="map">
+  		select 
+  		 <include refid="Base_Column_List" />
+  		 from sa_shareholder a 
+  		 where a.enterprise_basic_id = #{eId,jdbcType=VARCHAR}
+  		 and a.enable!='2'
+  		<!--  where user login_name like #{loginName} -->
+  		<!--  limit #{pageOffset}, #{pageSize} -->
+  </select>
+  
+   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from sa_shareholder a
+    where a.id = #{id}
+  </select>
+    
+   <update id="updateByPrimaryKey" parameterType="cn.com.pansky.otp5.association.dao.po.Shareholder" >  
+        update sa_shareholder a  
+        <set >  
+          <if test="name != null" >  
+            name = #{name},  
+          </if>  
+          <if test="quantity != null" >  
+            sharehold_quantity = #{quantity},  
+          </if>  
+          <if test="ratio != null" >  
+            sharehold_ratio = #{ratio},  
+          </if>  
+          <if test="enable != null" >  
+            enable = #{enable},
+          </if>
+           <if test="lastModifyUser != null and creationUser !='' " >  
+            	last_modify_user = #{lastModifyUser},  
+          	</if>  
+            <if test="lastModifyTime != null and creationUser !='' " >  
+            	last_modify_time = #{lastModifyTime}
+          	</if>    
+        </set>  
+        where id = #{id,jdbcType=VARCHAR}  
+      </update>  
+  
+
+  
+       <update id="updateEnableByEId" parameterType="java.lang.String">  
+        update sa_shareholder a  
+         <set >   
+            enable = #{1}
+        </set>  
+        where enterprise_basic_id = #{0}  
+      </update>
+      
+      
+      
+      
+       <select id="selectAll" resultMap="BaseResultMap" >
+	    select 
+	    *
+	    from sa_shareholder
+	  </select>
+ 
+      
+      
+      
+</mapper>

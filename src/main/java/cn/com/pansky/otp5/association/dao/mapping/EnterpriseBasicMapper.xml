@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.pansky.otp5.association.dao.IEnterpriseBasicDao" >
+
+  <resultMap id="BaseResultMap" type="cn.com.pansky.otp5.association.dao.po.EnterpriseBasic" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="is_member" property="isMember" jdbcType="VARCHAR" />
+    <result column="hy_level" property="hyLevel" jdbcType="VARCHAR" />
+    <result column="info_sources" property="infoSources" jdbcType="VARCHAR" />
+    <result column="first_time" property="firstTime" jdbcType="DATE" />
+    <result column="employee_num" property="employeeNum" jdbcType="VARCHAR" />
+    <result column="registered_capital" property="registeredCapital" jdbcType="VARCHAR" />
+    <result column="register_address" property="registerAddress" jdbcType="VARCHAR" />
+    <result column="register_address_detail" property="registerAddressDetail" jdbcType="VARCHAR" />
+    <result column="address_detail" property="addressDetail" jdbcType="VARCHAR" />
+    <result column="is_public" property="isPublic" jdbcType="VARCHAR" />
+    <result column="is_high" property="isHigh" jdbcType="VARCHAR" />
+    <result column="pass_high_date" property="passHighDate" jdbcType="DATE" />
+    <result column="postal_code" property="postalCode" jdbcType="VARCHAR" />
+    <result column="yf_num" property="yfNum" jdbcType="NUMERIC" />
+    <result column="gl_num" property="glNum" jdbcType="NUMERIC" />
+    <result column="zb_num" property="zbNum" jdbcType="NUMERIC" />
+    <result column="ss_num" property="ssNum" jdbcType="NUMERIC" />
+    <result column="bs_num" property="bsNum" jdbcType="NUMERIC" />
+    <result column="avg_num" property="avgNum" jdbcType="NUMERIC" />
+    <result column="enable" property="enable" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+     <result column="creation_user" property="creationUser" jdbcType="VARCHAR" />
+    <result column="creation_time" property="creationTime" jdbcType="TIMESTAMP" />
+    <result column="last_modify_user" property="lastModifyUser" jdbcType="VARCHAR" />
+    <result column="last_modify_time" property="lastModifyTime" jdbcType="TIMESTAMP" />
+    <result column="longitude" property="longitude" jdbcType="VARCHAR" />
+    <result column="dimension" property="dimension" jdbcType="VARCHAR" />
+    <result column="aptitudeNames" property="aptitudeNames" jdbcType="VARCHAR" />
+    <result column="techNames" property="techNames" jdbcType="VARCHAR" />
+    <result column="industryNames" property="industryNames" jdbcType="VARCHAR" />
+    <result column="fzrName" property="fzrName" jdbcType="VARCHAR" />
+    <result column="fzrJob" property="fzrJob" jdbcType="VARCHAR" />
+    <result column="fzrPhone" property="fzrPhone" jdbcType="VARCHAR" />
+    <result column="fzrTel" property="fzrTel" jdbcType="VARCHAR" />
+    <result column="fzrEmail" property="fzrEmail" jdbcType="VARCHAR" />
+    <result column="lxrName" property="lxrName" jdbcType="VARCHAR" />
+    <result column="lxrJob" property="lxrJob" jdbcType="VARCHAR" />
+    <result column="lxrPhone" property="lxrPhone" jdbcType="VARCHAR" />
+    <result column="lxrTel" property="lxrTel" jdbcType="VARCHAR" />
+    <result column="lxrEmail" property="lxrEmail" jdbcType="VARCHAR" />
+    <result column="owner" property="owner" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, name, code,url, is_member, hy_level, info_sources,
+    first_time, employee_num, registered_capital, register_address, register_address_detail, 
+    address, address_detail, is_public, is_high, pass_high_date, postal_code, 
+    yf_num, gl_num, zb_num, ss_num, bs_num, avg_num,remark,enable,
+    creation_user,creation_time,last_modify_user,last_modify_time,longitude,dimension,
+    fzrName,fzrJob,fzrPhone,fzrTel,fzrEmail,lxrName,lxrJob,lxrPhone,lxrTel,lxrEmail,owner
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select  *
+    <!-- <include refid="Base_Column_List" /> -->
+   
+    from sa_enterprise_basic
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <insert id="insert" parameterType="cn.com.pansky.otp5.association.dao.po.EnterpriseBasic" >
+    insert into sa_enterprise_basic (  <include refid="Base_Column_List" /> )
+    values (
+    		#{id}, #{name}, #{code}, #{url},#{isMember}, #{hyLevel}, #{infoSources},
+    		#{firstTime}, #{employeeNum}, #{registeredCapital}, #{registerAddress}, #{registerAddressDetail},
+    		#{address},#{addressDetail},#{isPublic}, #{isHigh},#{passHighDate},  #{postalCode},  #{yfNum},  #{glNum}, #{zbNum},
+    		#{ssNum}, #{bsNum}, #{avgNum},#{remark},#{enable}, 
+    		#{creationUser},#{creationTime},#{lastModifyUser},#{lastModifyTime},#{longitude},#{dimension},
+    		#{fzrName},#{fzrJob},#{fzrPhone},#{fzrTel},#{fzrEmail},#{lxrName},#{lxrJob},#{lxrPhone},#{lxrTel},#{lxrEmail},#{owner}
+    )
+  </insert>
+  
+  <select id="findByPage" resultMap="BaseResultMap"  parameterType="map">
+  	<if test="name != null">
+  		<bind name="_name" value="'%' + _parameter.name + '%'" />
+   	</if>  	
+   	<if test="address != null">
+  		<bind name="_address" value=" + _parameter.address + '%'" />
+   	</if>
+   	
+   	
+   	select * from (
+  			SELECT 
+  				(
+					 SELECT GROUP_CONCAT(dic.name SEPARATOR ',') techNames
+					 FROM sa_tech_relate b,dictionary dic
+					 WHERE a.id = b.e_id
+					 AND b.code = dic.code
+					 AND dic.type='DIC002'
+				 ) techNames,
+				 (
+					 SELECT GROUP_CONCAT(b.code SEPARATOR ',') techs
+					 FROM sa_tech_relate b
+					 WHERE a.id = b.e_id
+				 ) techs,
+				 (
+					 SELECT GROUP_CONCAT(dic.name SEPARATOR ',') industryNames
+					 FROM sa_industry_relate c,dictionary dic
+					 WHERE a.id = c.e_id
+					 AND c.code = dic.code
+					 AND dic.type='DIC005'
+				 ) industryNames,	
+				 (
+					 SELECT GROUP_CONCAT(c.code SEPARATOR ',') industrys
+					 FROM sa_industry_relate c
+					 WHERE a.id = c.e_id
+				 ) industrys,	
+				 (
+					SELECT d.total_income FROM sa_annual_report d 
+					 WHERE a.id = d.enterprise_basic_id AND d.year = #{lastYear}
+				)	totalIncome,
+				 (
+					SELECT d.develop_expenses FROM sa_annual_report d 
+					 WHERE a.id = d.enterprise_basic_id AND d.year = 2016
+				)	developExpenses,
+  		 	a.* 
+  		 from sa_enterprise_basic a 
+  		 where a.enable !='2'
+  		  <if test="name != null and name != '' ">
+  		  	and a.name like  #{_name}
+  		  </if>
+  		  <if test="isPublic != null and isPublic != '' ">
+  		  	and a.is_public =  #{isPublic}
+  		  </if>
+  		  <if test="infoSources != null and infoSources != '' ">
+  		  	and a.info_sources =  #{infoSources}
+  		  </if>
+  		  <if test="isMember != null and isMember != '' ">
+  		  	and a.is_member =  #{isMember}
+  		  </if>
+  		  <if test="isHigh != null and isHigh != '' ">
+  		  	and a.is_high =  #{isHigh}
+  		  </if>
+  		  <if test="hyLevel != null and hyLevel != '' ">
+  		  	and a.hy_level =  #{hyLevel}
+  		  </if>
+  		  <if test="address != null and address != '' ">
+  		  	and a.address like  #{_address}
+  		  </if>
+  		  <if test="firstTime != null and firstTime != '' ">
+  		  	and a.first_time >=  #{firstTime}
+  		  </if>
+  		  <if test="registeredCapital_start != null and registeredCapital_start != '' ">
+  		  	and a.registered_capital >=  #{registeredCapital_start}
+  		  </if>
+  		  <if test="registeredCapital_end != null and registeredCapital_end != '' ">
+  		  	and a.registered_capital &lt;=  #{registeredCapital_end}
+  		  </if>
+  		  <if test="avgNum_start != null and avgNum_start != '' ">
+  		  	and a.avg_num >=  #{avgNum_start}
+  		  </if>
+  		  <if test="avgNum_end != null and avgNum_end != '' ">
+  		  	and a.avg_num &lt;=  #{avgNum_end}
+  		  </if>
+  		  <if test="owner != null and owner != '' ">
+  		  	and a.owner =  #{owner}
+  		  </if>
+  		  
+  		  
+  		  
+  	 ) rs where 1=1	  
+  	 		<if test="techs != null">
+	  		   <foreach collection="techs" index="index" item="item">
+	   				   and find_in_set(#{item}, rs.techs)  
+				</foreach>
+			</if>
+  	 		<if test="industrys != null">
+	  		   <foreach collection="industrys" index="index" item="item">
+	   				   and find_in_set(#{item}, rs.industrys)  
+				</foreach>
+			</if>
+			<if test="totalIncome_start != null and totalIncome_start != '' ">
+	  		  	and rs.totalIncome >=  #{totalIncome_start}
+	  		  </if>
+	  		  <if test="totalIncome_end != null and totalIncome_end != '' ">
+	  		  	and rs.totalIncome &lt;=  #{totalIncome_end}
+	  		  </if>
+			<if test="developExpenses_start != null and developExpenses_start != '' ">
+	  		  	and rs.developExpenses >=  #{developExpenses_start}
+	  		  </if>
+	  		  <if test="developExpenses_end != null and developExpenses_end != '' ">
+	  		  	and rs.developExpenses &lt;=  #{developExpenses_end}
+	  		  </if>
+  		  order by rs.name
+  </select>
+  
+  
+    
+  <select id="findByParams" resultMap="BaseResultMap"  parameterType="map">
+  	<if test="name != null">
+  		<bind name="_name" value="'%' + _parameter.name + '%'" />
+   	</if>  	
+   	<if test="address != null">
+  		<bind name="_address" value=" + _parameter.address + '%'" />
+   	</if>
+   	select * from (
+  			SELECT 
+  				(
+					 SELECT GROUP_CONCAT(dic.name SEPARATOR ',') techNames
+					 FROM sa_tech_relate b,dictionary dic
+					 WHERE a.id = b.e_id
+					 AND b.code = dic.code
+					 AND dic.type='DIC002'
+				 ) techNames,
+				 (
+					 SELECT GROUP_CONCAT(b.code SEPARATOR ',') techs
+					 FROM sa_tech_relate b
+					 WHERE a.id = b.e_id
+				 ) techs,
+				 (
+					 SELECT GROUP_CONCAT(dic.name SEPARATOR ',') industryNames
+					 FROM sa_industry_relate c,dictionary dic
+					 WHERE a.id = c.e_id
+					 AND c.code = dic.code
+					 AND dic.type='DIC005'
+				 ) industryNames,	
+				 (
+					 SELECT GROUP_CONCAT(c.code SEPARATOR ',') industrys
+					 FROM sa_industry_relate c
+					 WHERE a.id = c.e_id
+				 ) industrys,	
+				 (
+					SELECT d.total_income FROM sa_annual_report d 
+					 WHERE a.id = d.enterprise_basic_id AND d.year = #{lastYear}
+				)	totalIncome,
+				 (
+					SELECT d.develop_expenses FROM sa_annual_report d 
+					 WHERE a.id = d.enterprise_basic_id AND d.year = 2016
+				)	developExpenses,
+  		 	a.* 
+  		 from sa_enterprise_basic a 
+  		 where a.enable !='2'
+  		  <if test="name != null and name != '' ">
+  		  	and a.name like  #{_name}
+  		  </if>
+  		  <if test="isPublic != null and isPublic != '' ">
+  		  	and a.is_public =  #{isPublic}
+  		  </if>
+  		  <if test="infoSources != null and infoSources != '' ">
+  		  	and a.info_sources =  #{infoSources}
+  		  </if>
+  		  <if test="isMember != null and isMember != '' ">
+  		  	and a.is_member =  #{isMember}
+  		  </if>
+  		  <if test="isHigh != null and isHigh != '' ">
+  		  	and a.is_high =  #{isHigh}
+  		  </if>
+  		  <if test="hyLevel != null and hyLevel != '' ">
+  		  	and a.hy_level =  #{hyLevel}
+  		  </if>
+  		  <if test="address != null and address != '' ">
+  		  	and a.address like  #{_address}
+  		  </if>
+  		  <if test="firstTime != null and firstTime != '' ">
+  		  	and a.first_time >=  #{firstTime}
+  		  </if>
+  		  <if test="registeredCapital_start != null and registeredCapital_start != '' ">
+  		  	and a.registered_capital >=  #{registeredCapital_start}
+  		  </if>
+  		  <if test="registeredCapital_end != null and registeredCapital_end != '' ">
+  		  	and a.registered_capital &lt;=  #{registeredCapital_end}
+  		  </if>
+  		  <if test="avgNum_start != null and avgNum_start != '' ">
+  		  	and a.avg_num >=  #{avgNum_start}
+  		  </if>
+  		  <if test="avgNum_end != null and avgNum_end != '' ">
+  		  	and a.avg_num &lt;=  #{avgNum_end}
+  		  </if>
+  		  <if test="owner != null and owner != '' ">
+  		  	and a.owner =  #{owner}
+  		  </if>
+  	 ) rs where 1=1	  
+  	 		<if test="techs != null">
+	  		   <foreach collection="techs" index="index" item="item">
+	   				   and find_in_set(#{item}, rs.techs)  
+				</foreach>
+			</if>
+  	 		<if test="industrys != null">
+	  		   <foreach collection="industrys" index="index" item="item">
+	   				   and find_in_set(#{item}, rs.industrys)  
+				</foreach>
+			</if>
+			<if test="totalIncome_start != null and totalIncome_start != '' ">
+	  		  	and rs.totalIncome >=  #{totalIncome_start}
+	  		  </if>
+	  		  <if test="totalIncome_end != null and totalIncome_end != '' ">
+	  		  	and rs.totalIncome &lt;=  #{totalIncome_end}
+	  		  </if>
+			<if test="developExpenses_start != null and developExpenses_start != '' ">
+	  		  	and rs.developExpenses >=  #{developExpenses_start}
+	  		  </if>
+	  		  <if test="developExpenses_end != null and developExpenses_end != '' ">
+	  		  	and rs.developExpenses &lt;=  #{developExpenses_end}
+	  		  </if>
+			
+  		  order by rs.name
+  </select>
+  
+  
+      <update id="updateByPrimaryKey" parameterType="cn.com.pansky.otp5.association.dao.po.EnterpriseBasic" >  
+        update sa_enterprise_basic  
+        <set>  
+            name = #{name} ,
+            code = #{code} ,
+            url = #{url},  
+            is_member = #{isMember},  
+            hy_level = #{hyLevel},  
+            info_sources = #{infoSources},  
+            first_time = #{firstTime},  
+            employee_num = #{employeeNum},  
+            registered_capital = #{registeredCapital},  
+            register_address = #{registerAddress},  
+            register_address_detail = #{registerAddressDetail},  
+            address = #{address},  
+            address_detail = #{addressDetail},  
+            is_public = #{isPublic},  
+            is_high = #{isHigh},  
+            pass_high_date = #{passHighDate},  
+            postal_code = #{postalCode},  
+            yf_num = #{yfNum},  
+            gl_num = #{glNum},  
+            zb_num = #{zbNum},  
+            ss_num = #{ssNum},  
+            bs_num = #{bsNum},  
+            avg_num = #{avgNum},
+            enable = #{enable},
+            remark = #{remark},
+            longitude = #{longitude},
+            dimension = #{dimension},
+            fzrName = #{fzrName},
+            fzrJob = #{fzrJob},
+            fzrPhone = #{fzrPhone},
+            fzrTel = #{fzrTel},
+            fzrEmail = #{fzrEmail},
+            lxrName = #{lxrName},
+            lxrJob = #{lxrJob},
+            lxrPhone = #{lxrPhone},
+            lxrTel = #{lxrTel},
+            lxrEmail = #{lxrEmail},
+        <!--     <if test="creationUser != null and creationUser !='' " >  
+            	creation_user = #{creationUser},  
+          	</if>  
+            <if test="creationTime != null and creationUser !='' " >  
+            	creation_time = #{creationTime},  
+          	</if>   -->
+            <if test="lastModifyUser != null and creationUser !='' " >  
+            	last_modify_user = #{lastModifyUser},  
+          	</if>  
+            <if test="lastModifyTime != null and creationUser !='' " >  
+            	last_modify_time = #{lastModifyTime}
+          	</if>  
+          
+        </set>  
+        where id = #{id}  
+      </update>  
+
+
+   <select id="findAllEnterpriseByEnable" resultMap="BaseResultMap"  parameterType="java.lang.String">
+    select  * from sa_enterprise_basic a
+    where a.enable=#{0}
+  </select>
+  
+   <select id="findAllEnterprise" resultMap="BaseResultMap">
+    select  * from sa_enterprise_basic a
+  </select>
+ 
+ 
+   <select id="checkCodeForAdd"  resultType="java.lang.Integer"  parameterType="cn.com.pansky.otp5.association.dao.po.EnterpriseBasic">
+    select  count(0) from sa_enterprise_basic a where a.code=#{code}
+  </select>
+ 
+   <select id="checkCodeForUpdate"  resultType="java.lang.Integer"  parameterType="cn.com.pansky.otp5.association.dao.po.EnterpriseBasic">
+    select  count(0) from sa_enterprise_basic a where a.id != #{id} and a.code=#{code}
+  </select>
+ 
+ 
+</mapper>

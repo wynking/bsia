@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context
+         http://www.springframework.org/schema/context/spring-context.xsd
+         http://www.springframework.org/schema/aop
+         http://www.springframework.org/schema/aop/spring-aop.xsd
+         http://www.springframework.org/schema/tx 
+         http://www.springframework.org/schema/tx/spring-tx.xsd
+         http://www.springframework.org/schema/mvc 
+		 http://www.springframework.org/schema/mvc/spring-mvc.xsd ">
+		 
+	
+		 	<!-- 引入配置文件 -->
+<!-- 	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:config.properties" />
+	</bean>   -->  
+		 	<!-- 引入配置文件 -->
+	<bean id="propertyConfigurer"
+		class="cn.com.pansky.otp5.common.PorpertiesConfigurer">
+		<property name="location" value="classpath:config.properties" />
+	</bean>    
+	  
+	<!-- 自动扫描 -->
+	<context:component-scan base-package="cn.com.pansky.otp5" />
+	
+	<bean id="daoAop" class="cn.com.pansky.otp5.baseplatform.aop.DaoAop" />
+	
+	<aop:config>
+		<aop:aspect ref="daoAop" >
+			<aop:before method="beforeInsert" pointcut="execution(* cn.com.pansky.otp5.*.dao..*.insert*(..))" />
+			<aop:before method="beforeUpdate" pointcut="execution(* cn.com.pansky.otp5.*.dao..*.update*(..))" />
+			<aop:before method="beforeUpdate" pointcut="execution(* cn.com.pansky.otp5.*.dao..*.remove*(..))" />
+			<aop:before method="beforeUpdate" pointcut="execution(* cn.com.pansky.otp5.*.dao..*.delete*(..))" /> 
+		</aop:aspect>
+	</aop:config>
+	
+
+    <!-- <import resource="redis.xml"/>     -->       
+    
+    <bean id="sysInitBean" class="cn.com.pansky.otp5.common.SysInitBean"></bean>         
+    
+    <bean class="cn.com.pansky.otp5.common.SpringContextHolder"  /> 
+    
+    <import resource="spring-mybatis.xml"/>    
+    
+    <!-- <import resource="spring-dubbo-provider.xml"/>-->   
+    
+   <!-- <import resource="spring-dubbo-consumer.xml"/> -->
+    
+    <!-- 	
+	<bean id="demoService" class="cn.com.pansky.otp5.dubbo.service.impl.DemoServiceImpl" />
+	
+	提供方应用信息，用于计算依赖关系
+	<dubbo:application init="true" name="xs_provider" /> 
+	-->
+
+</beans>

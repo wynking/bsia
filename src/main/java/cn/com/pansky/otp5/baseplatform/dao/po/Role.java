@@ -1,0 +1,73 @@
+package cn.com.pansky.otp5.baseplatform.dao.po;
+
+public class Role extends BasePO{
+	
+    private static final long serialVersionUID = -1584944509215341739L;
+
+    private String id;
+	
+	private String name;
+
+    private String remark;
+
+    private String  enabled;
+    
+    private String resourceIds;
+
+    
+    public String getId() {
+        return id;
+    }
+
+    
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    
+    public String getName() {
+        return name;
+    }
+
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    
+    public String getRemark() {
+        return remark;
+    }
+
+    
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+
+    
+    public String getEnabled() {
+        return enabled;
+    }
+
+
+    
+    public void setEnabled(String enabled) {
+        this.enabled = enabled;
+    }
+
+
+    
+    public String getResourceIds() {
+        return resourceIds;
+    }
+
+
+    
+    public void setResourceIds(String resourceIds) {
+        this.resourceIds = resourceIds;
+    }
+
+    
+
+}

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context
+         http://www.springframework.org/schema/context/spring-context.xsd
+         http://www.springframework.org/schema/aop
+         http://www.springframework.org/schema/aop/spring-aop.xsd
+         http://www.springframework.org/schema/tx 
+         http://www.springframework.org/schema/tx/spring-tx.xsd
+         http://www.springframework.org/schema/mvc 
+		 http://www.springframework.org/schema/mvc/spring-mvc.xsd ">
+                        
+
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="initialSize" value="${initialSize}"></property>
+		<property name="maxActive" value="${maxActive}"></property>
+		<property name="maxIdle" value="${maxIdle}"></property>
+		<property name="minIdle" value="${minIdle}"></property>
+		<property name="maxWait" value="${maxWait}"></property>
+	</bean>
+	
+	<!-- <bean id="writeDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="initialSize" value="${initialSize}"></property>
+		<property name="maxActive" value="${maxActive}"></property>
+		<property name="maxIdle" value="${maxIdle}"></property>
+		<property name="minIdle" value="${minIdle}"></property>
+		<property name="maxWait" value="${maxWait}"></property>
+	</bean>
+	
+	
+	<bean id="readDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url2}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="initialSize" value="${initialSize}"></property>
+		<property name="maxActive" value="${maxActive}"></property>
+		<property name="maxIdle" value="${maxIdle}"></property>
+		<property name="minIdle" value="${minIdle}"></property>
+		<property name="maxWait" value="${maxWait}"></property>
+	</bean>
+	
+	<bean id="dataSource" class=" cn.com.pansky.otp5.baseplatform.dao.myDataSource.DataSources">
+        <property name="targetDataSources">
+            <map key-type="java.lang.String">
+                <entry key="WRITE" value-ref="writeDataSource"/>
+                <entry key="READ" value-ref="readDataSource"/>
+            </map>
+        </property>
+        <property name="defaultTargetDataSource" ref="writeDataSource"/>
+    </bean>
+     -->
+	
+
+	<!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<!-- 自动扫描mapping.xml文件 -->
+		<property name="mapperLocations" value="classpath*:cn/com/pansky/otp5/*/dao/mapping/*.xml"></property>
+		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
+		<property name="plugins">
+            <array>
+                <bean class="com.github.pagehelper.PageHelper">
+                    <property name="properties">
+                        <value>
+                            dialect=mysql
+                        </value>
+                    </property>
+                </bean>
+               <bean class="cn.com.pansky.otp5.baseplatform.dao.myDataSource.DynamicPlugin"> </bean>
+            </array>
+        </property>
+	</bean>
+
+	<!-- DAO接口所在包名，Spring会自动查找其下的类 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="cn.com.pansky.otp5.*.dao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean>
+
+	<!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->
+<!-- 	<bean id="transactionManager"
+		class="cn.com.pansky.otp5.baseplatform.dao.myDataSource.DynamicDataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean> -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<tx:advice id="transactionAdvice" transaction-manager="transactionManager">    
+        <tx:attributes>    
+            <tx:method name="save*" propagation="REQUIRED" />    
+            <tx:method name="add*" propagation="REQUIRED" />    
+            <tx:method name="insert*" propagation="REQUIRED" />  
+            <tx:method name="delete*" propagation="REQUIRED" />      
+            <tx:method name="update*" propagation="REQUIRED" />    
+            <tx:method name="import*" propagation="REQUIRED" />    
+            <tx:method name="find*" read-only="true" />    
+            <tx:method name="get*" read-only="true" />    
+            <tx:method name="select*" read-only="true" />    
+        </tx:attributes>    
+    </tx:advice> 
+    
+      <aop:config>    
+    <!--     第一个"*"代表所有类, 第二个"*"代表所有方法, ".."代表任意参数     -->
+        <aop:pointcut id="pointcut" expression="execution(* cn.com.pansky.otp5.*.service.*.*(..))" />    
+          
+       <!--  把事务控制在service层     -->
+        <aop:advisor pointcut-ref="pointcut" advice-ref="transactionAdvice" />    
+    </aop:config>   
+    
+
+	
+
+</beans>

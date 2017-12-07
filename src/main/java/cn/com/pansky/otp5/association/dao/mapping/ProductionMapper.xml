@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.pansky.otp5.association.dao.IProductionDao">
+
+	<resultMap id="BaseResultMap"
+		type="cn.com.pansky.otp5.association.dao.po.Production">
+		<id column="id" property="id" jdbcType="VARCHAR" />
+		<result column="enterprise_basic_id" property="eId" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="income" property="income" jdbcType="VARCHAR" />
+		<result column="enable" property="enable" jdbcType="VARCHAR" />
+	    <result column="creation_user" property="creationUser" jdbcType="VARCHAR" />
+    	<result column="creation_time" property="creationTime" jdbcType="TIMESTAMP" />
+    	<result column="last_modify_user" property="lastModifyUser" jdbcType="VARCHAR" />
+    	<result column="last_modify_time" property="lastModifyTime" jdbcType="TIMESTAMP" />
+	    <result column="fwlyNames" property="fwlyNames" jdbcType="VARCHAR" />
+	    
+	    
+		
+		<collection property="fwlypos"
+			ofType="cn.com.pansky.otp5.association.dao.po.ProductionFieldRelate">
+			<id column="pfr_id" property="id" jdbcType="VARCHAR" />
+			<result column="production_id" property="productionId"
+				jdbcType="VARCHAR" />
+			<result column="fwly_code" property="fwlyCode" jdbcType="VARCHAR" />
+		</collection>
+
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, enterprise_basic_id, name, income, enable,
+    creation_user,creation_time,last_modify_user,last_modify_time
+	</sql>
+	
+	
+
+	<insert id="insert" parameterType="cn.com.pansky.otp5.association.dao.po.Production">
+		insert into sa_production (
+		<include refid="Base_Column_List" />
+		)
+		values (
+		#{id}, #{eId}, #{name}, 
+		#{income}, #{enable}, 
+    	#{creationUser},#{creationTime},#{lastModifyUser},#{lastModifyTime}
+		)
+	</insert>
+
+	<select id="findByPage" resultMap="BaseResultMap" parameterType="map">
+		
+		select
+		<include refid="Base_Column_List" />
+		, (
+				SELECT GROUP_CONCAT(d.name SEPARATOR ',') NAME
+			 FROM sa_production_field_relate a,dictionary d 
+			 WHERE a.fwly_code = d.code
+			 AND d.type='DIC005'
+			 AND a.production_id=b.id
+			 GROUP BY a.production_id
+			 ) fwlyNames
+		from sa_production b
+		where b.enterprise_basic_id = #{eId,jdbcType=VARCHAR}
+		and b.enable!='2'
+		
+		<!-- where user login_name like #{loginName} -->
+		<!-- limit #{pageOffset}, #{pageSize} -->
+	</select>
+
+	<!-- <select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from sa_production a
+		where a.id = #{id}
+	</select> -->
+	
+	 <select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		SELECT a.id, a.enterprise_basic_id, a.income,a.name,
+				pfr.id pfr_id, pfr.fwly_code, pfr.production_id 
+		FROM sa_production a
+		left join sa_production_field_relate pfr
+		on a.id=pfr.production_id
+		where a.id=#{id}
+	</select>
+	
+
+	<update id="updateByPrimaryKey" parameterType="cn.com.pansky.otp5.association.dao.po.Production">
+		update sa_production a
+		<set>
+			<if test="name != null">
+				name = #{name},
+			</if>
+			<if test="income != null">
+				income = #{income},
+			</if>
+			<if test="enable != null">
+				enable = #{enable},
+			</if>
+           <if test="lastModifyUser != null and creationUser !='' " >  
+            	last_modify_user = #{lastModifyUser},  
+          	</if>  
+            <if test="lastModifyTime != null and creationUser !='' " >  
+            	last_modify_time = #{lastModifyTime}
+          	</if>  
+		</set>
+		where id = #{id,jdbcType=VARCHAR}
+	</update>
+
+	   
+       <update id="updateEnableByEId" parameterType="java.lang.String">  
+        update sa_production a  
+         <set >   
+            enable = #{1}
+        </set>  
+        where enterprise_basic_id = #{0}  
+      </update>  
+
+
+
+ <select id="selectAll" resultMap="BaseResultMap" >
+	    select 
+	    <include refid="Base_Column_List" />
+		, (
+				SELECT GROUP_CONCAT(d.name SEPARATOR ',') NAME
+			 FROM sa_production_field_relate a, dictionary d 
+			 WHERE a.fwly_code = d.code
+			 AND d.type='DIC005'
+			 AND a.production_id=b.id
+			 GROUP BY a.production_id
+			 ) fwlyNames
+	    from sa_production b
+	  </select>
+ 
+
+
+</mapper>

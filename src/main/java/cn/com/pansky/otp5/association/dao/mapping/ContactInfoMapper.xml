@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.pansky.otp5.association.dao.IContactInfoDao" >
+
+  <resultMap id="BaseResultMap" type="cn.com.pansky.otp5.association.dao.po.ContactInfo" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="enterprise_basic_id" property="eId" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="job" property="job" jdbcType="VARCHAR" />
+    <result column="tel_1" property="tel_1" jdbcType="VARCHAR" />
+    <result column="tel_2" property="tel_2" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="enable" property="enable" jdbcType="VARCHAR" />
+    <result column="creation_user" property="creationUser" jdbcType="VARCHAR" />
+    <result column="creation_time" property="creationTime" jdbcType="TIMESTAMP" />
+    <result column="last_modify_user" property="lastModifyUser" jdbcType="VARCHAR" />
+    <result column="last_modify_time" property="lastModifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, enterprise_basic_id, name, job, tel_1, tel_2, phone, email,enable,
+    creation_user,creation_time,last_modify_user,last_modify_time
+  </sql>
+  
+  <insert id="insert" parameterType="cn.com.pansky.otp5.association.dao.po.ContactInfo" >
+    insert into sa_contact (id, enterprise_basic_id, name, job, tel_1, tel_2, phone, email,enable, creation_user,creation_time,last_modify_user,last_modify_time)
+    values (#{id,jdbcType=VARCHAR}, #{eId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}
+    		, #{job,jdbcType=VARCHAR}, #{tel_1,jdbcType=VARCHAR}, #{tel_2,jdbcType=VARCHAR}
+    		, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{enable,jdbcType=VARCHAR}
+    		, #{creationUser},#{creationTime},#{lastModifyUser},#{lastModifyTime}
+    )
+  </insert>
+  
+   <select id="findByPage" resultMap="BaseResultMap"  parameterType="map">
+  		select 
+  		 <include refid="Base_Column_List" />
+  		 from sa_contact a 
+  		 where a.enterprise_basic_id = #{eId,jdbcType=VARCHAR}
+  		 and a.enable!='2'
+  		<!--  where user login_name like #{loginName} -->
+  		<!--  limit #{pageOffset}, #{pageSize} -->
+  </select>
+  
+   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from sa_contact a
+    where a.id = #{id,jdbcType=VARCHAR}
+  </select>
+  
+   <update id="updateByPrimaryKey" parameterType="cn.com.pansky.otp5.association.dao.po.ContactInfo" >  
+        update sa_contact a  
+        <set >  
+          <if test="name != null" >  
+            name = #{name,jdbcType=VARCHAR},  
+          </if>  
+          <if test="job != null" >  
+            job = #{job,jdbcType=VARCHAR},  
+          </if>  
+          <if test="tel_1 != null" >  
+            tel_1 = #{tel_1,jdbcType=VARCHAR},  
+          </if>  
+          <if test="tel_2 != null" >  
+            tel_2 = #{tel_2,jdbcType=VARCHAR},  
+          </if>  
+          <if test="phone != null" >  
+            phone = #{phone,jdbcType=VARCHAR},  
+          </if>  
+          <if test="email != null" >  
+            email = #{email,jdbcType=VARCHAR},  
+          </if>  
+          <if test="enable != null" >  
+            enable = #{enable,jdbcType=VARCHAR},  
+          </if> 
+           <if test="lastModifyUser != null and creationUser !='' " >  
+            	last_modify_user = #{lastModifyUser},  
+          	</if>  
+            <if test="lastModifyTime != null and creationUser !='' " >  
+            	last_modify_time = #{lastModifyTime}
+          	</if>  
+        </set>  
+        where id = #{id,jdbcType=VARCHAR}  
+      </update>  
+      
+      
+  <update id="updateEnableByEId" parameterType="java.lang.String">  
+        update sa_contact a  
+        <set >   
+            enable = #{1}
+        </set>  
+        where enterprise_basic_id = #{0}  
+      </update>  
+
+	  <select id="selectAll" resultMap="BaseResultMap" >
+	    select 
+	    *
+	    from sa_contact
+	  </select>
+ 
+</mapper>

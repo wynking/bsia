@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.com.pansky.otp5.baseplatform.dao.IUserDao" >
+
+  <resultMap id="BaseResultMap" type="cn.com.pansky.otp5.baseplatform.dao.po.User" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="login_name" property="loginName" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="true_name" property="trueName" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="is_super" property="isSuper" jdbcType="VARCHAR" />
+    <result column="enabled" property="enabled" jdbcType="VARCHAR" />
+    <result column="creation_user" property="creationUser" jdbcType="VARCHAR" />
+    <result column="creation_time" property="creationTime" jdbcType="DATE" />
+    <result column="last_modify_user" property="lastModifyUser" jdbcType="VARCHAR" />
+    <result column="last_modify_time" property="lastModifyTime" jdbcType="DATE" />
+    
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, login_name, password, true_name, phone, is_super, enabled,
+    creation_user,creation_time,last_modify_user,last_modify_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from auth_user
+    where id = #{id}
+  </select>
+  
+  
+    
+   <update id="updateByPrimaryKey" parameterType="cn.com.pansky.otp5.baseplatform.dao.po.User" >  
+        update auth_user a  
+        <set >  
+            login_name = #{loginName},  
+            true_name = #{trueName},  
+            password = #{password},  
+            phone = #{phone},  
+            enabled = #{enabled},  
+            is_super = #{isSuper},  
+            creation_user = #{creationUser},  
+            creation_time = #{creationTime},  
+            last_modify_user = #{lastModifyUser},  
+            last_modify_time = #{lastModifyTime}
+        </set>  
+        where id = #{id}  
+      </update>  
+  
+  
+  <insert id="insert" parameterType="cn.com.pansky.otp5.baseplatform.dao.po.User" >
+    insert into auth_user ( <include refid="Base_Column_List" />)
+    values (#{id}, #{loginName}, #{password}, #{trueName}, #{phone}, #{isSuper},#{enabled},
+    		#{creationUser},#{creationTime},#{lastModifyUser},#{lastModifyTime}
+    )
+  </insert>
+  
+  <select id="findByPage" resultMap="BaseResultMap"  parameterType="map">
+  
+  		select 
+  		 *
+  		 from auth_user a 
+  		 where a.enabled!='2' and a.id !='1'
+  		 order by a.true_name
+  		<!-- id 为 1 的是系统默认的超级管理员 -->
+  
+  </select>
+  
+  
+  
+  <select id="getUserByLoginNameAndPwd" resultMap="BaseResultMap"  >
+    select 
+    <include refid="Base_Column_List" />
+    from auth_user
+    where login_name = #{0}
+    and password = #{1}
+    and enabled='1'
+   
+  </select>
+  
+  
+ 
+ 
+</mapper>
